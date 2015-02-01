@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = 'YOURAPP',
+    name = 'hs0',
     version = '1.0.0',
     packages = find_packages(),
     install_requires = [
@@ -10,9 +10,9 @@ setup(
         "Flask"
     ],
     url = 'http://cottagelabs.com/',
-    author = 'Cottage Labs',
-    author_email = 'us@cottagelabs.com',
-    description = 'DESCRIBE YOUR APP',
+    author = 'Hench Station Zero',
+    author_email = 'richard@cottagelabs.com',
+    description = 'Hench Station Zero',
     classifiers = [
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
