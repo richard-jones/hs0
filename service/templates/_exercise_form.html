@@ -1,0 +1,43 @@
+<form class="form-horizontal" id="exercise-form">
+
+    <div class="row">
+
+        <div class="col-md-6">
+            {% autoescape off %}
+            {{ form_context.render_field_group("info") }}
+            {% endautoescape %}
+
+            <button class="btn btn-success" id="save">Save</button>
+        </div>
+
+        <div class="col-md-6">
+
+            <div class="row"><div class="col-md-12">
+                {% autoescape off %}
+                {{ form_context.render_field_group("controls") }}
+                {% endautoescape %}
+            </div></div>
+
+            <div class="row"><div class="col-md-12">
+                {% autoescape off %}
+                {{ form_context.render_field_group("weights") }}
+                {% endautoescape %}
+            </div></div>
+
+            <div class="row"><div class="col-md-12">
+                {% autoescape off %}
+                {{ form_context.render_field_group("cardio_simple") }}
+                {% endautoescape %}
+            </div></div>
+
+            <div class="row"><div class="col-md-12">
+                {% autoescape off %}
+                {{ form_context.render_field_group("cardio_complex") }}
+                {% endautoescape %}
+            </div></div>
+
+        </div>
+
+    </div>
+
+</form>

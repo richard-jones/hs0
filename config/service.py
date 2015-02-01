@@ -12,4 +12,5 @@ ELASTIC_SEARCH_INDEX = "hs0"
 
 # Classes from which to retrieve ES mappings to be used in this application
 ELASTIC_SEARCH_MAPPINGS = [
+    "service.exercise.ExerciseDAO"
 ]

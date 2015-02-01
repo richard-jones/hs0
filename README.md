@@ -72,7 +72,7 @@ Then, start your app with
     
     "admin" : {
         "owner" : "userid",              # who "owns" the exercies (could be made by a specific user)
-        "canon" : true                   # is this exercise in the "canonical" exercise database
+        "canon" : true|false             # is this exercise in the "canonical" exercise database
     },
     
     "track" : {
