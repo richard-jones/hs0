@@ -52,3 +52,54 @@ Then, start your app with
 
     python service/web.py
 
+# Data Model
+
+## Exercise
+
+```json
+{
+    "id" : "<unique id for the exercise>",
+    "created_date" : "<date record was created>",
+    "last_updated" : "<date record was last modified>",
+    
+    "info" : {
+        "name" : "<canonical name for this exercise>",
+        "aka" : ["<alternate names for this exercise>"],
+        "description" : "<description of this exercise>",
+        "classes": ["Cardio", "Legs"],   # What exercise classes does this belong to
+        "muscles" : ["Quads", "Glutes"], # Which muscles does this exercise hit
+    },
+    
+    "admin" : {
+        "owner" : "userid",              # who "owns" the exercies (could be made by a specific user)
+        "canon" : true                   # is this exercise in the "canonical" exercise database
+    },
+    
+    "track" : {
+        # typical weight-lifting exercise
+        "weight": true|false,            # track weight lifted
+        "reps": true|false,              # track number of reps done
+        "tempo": true|false,             # track the tempo (negative, hold, movement)
+        
+        # additional criterial for bodyweight-type exercises
+        "assist" : true|false,           # track exercise assitance (e.g. counter-weight for pull-ups)
+        
+        # typical cardio exercise
+        "time": true|false,              # track time for exercise
+        
+        "resisted" : true|false,         # does this exercise have some other form of resistance (e.g. cardio machine level)
+        "resistance_levels" : [          # if resisted=true, offer the user these options
+            {"name" : "<name of resistance level>", "value" : "<value to store>"}
+        ]
+        
+        "pace" : true|false,             # track the pace of the exercies     
+        "pace_units" : "rpm|mph|kph"     # what units to track pace with 
+        
+        "incline" : true|false,          # track incline
+        "incline_units" : "deg"          # units to track incline
+        
+        "hr" : true|false,               # track heart rate
+        "cal" : true|false               # track calories burned
+    }
+}
+```
