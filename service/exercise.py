@@ -83,7 +83,7 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
             },
             "track" : {
                 "bools" : [
-                    "weight", "reps", "tempo", "assist", "time", "resisted", "pace", "pace_units" "incline", "incline_units", "hr", "cal"
+                    "weight", "reps", "tempo", "assist", "time", "resisted", "pace", "pace_unit", "incline", "incline_unit", "hr", "cal"
                 ],
                 "lists" : ["resistance_levels"],
                 "list_entries" : {
@@ -118,11 +118,11 @@ class CRUDExercise(ES_CRUD_Wrapper_Ultra):
 ######################################################
 
 PACE_CHOICES = [
-    ("RPM", "rpm"), ("MPH", "mph"), ("KmPH", "kmph")
+    ("rpm", "RPM"), ("mph", "MPH"), ("kmph", "KmPH")
 ]
 
 INCLINE_CHOICES = [
-    ("Degrees", "deg")
+    ("deg", "Degrees")
 ]
 
 class Admin(Form):
@@ -137,28 +137,28 @@ class ResistanceLevels(Form):
 class Description(Form):
     # basic metadata about the exercise
     name = StringField("Exercise Name", [validators.DataRequired()])
-    aka = FieldList(StringField("AKA", [DataOptional()]))
+    aka = FieldList(StringField("AKA", [DataOptional()]), min_entries=1)
     description = TextAreaField("Description", [DataOptional()])
     classes = SelectMultipleField("Excercise Type", [validators.DataRequired()], choices=[])
     muscles = SelectMultipleField("Muscles Worked", [validators.DataRequired()], choices=[])
 
     # which aspects of the exercise to track
-    weight = BooleanField("Track Weight?")
-    reps = BooleanField("Track Reps?")
-    tempo = BooleanField("Track Tempo?")
-    assist = BooleanField("Track Weight?")
+    weight = BooleanField("Weight")
+    reps = BooleanField("Reps")
+    tempo = BooleanField("Tempo")
+    assist = BooleanField("Assistance")
 
-    time = BooleanField("Track Time?")
-    resisted = BooleanField("Track Resistance (cardio)?")
-    pace = BooleanField("Track Pace?")
-    incline = BooleanField("Track Incline?")
-    hr = BooleanField("Track Heart Rate?")
-    cal = BooleanField("Track Calories?")
+    time = BooleanField("Time")
+    resisted = BooleanField("Resistance")
+    pace = BooleanField("Pace")
+    incline = BooleanField("Incline")
+    hr = BooleanField("Heart Rate")
+    cal = BooleanField("Calories")
 
     # Detailed inputs
     pace_units = SelectField("Pace Units", choices=PACE_CHOICES)
     incline_units = SelectField("Incline Units", choices=INCLINE_CHOICES)
-    resistance_levels = FieldList(FormField(ResistanceLevels))
+    resistance_levels = FieldList(FormField(ResistanceLevels), min_entries=1)
 
 class Controls(Form):
     cardio = BooleanField("Cardio?")
@@ -234,10 +234,10 @@ class ExerciseRenderer(Renderer):
                 "label_width" : 4,
                 "control_width" : 8,
                 "fields" : [
-                    {"weight" : {}},
-                    {"reps" : {}},
-                    {"tempo" : {}},
-                    {"assist" : {}}
+                    {"weight" : {"suppress_form_group" : True}},
+                    {"reps" : {"suppress_form_group" : True}},
+                    {"tempo" : {"suppress_form_group" : True}},
+                    {"assist" : {"suppress_form_group" : True}}
                 ]
             },
             "cardio_simple" : {
@@ -246,23 +246,52 @@ class ExerciseRenderer(Renderer):
                 "label_width" : 4,
                 "control_width" : 8,
                 "fields" : [
-                    {"time" : {}},
-                    {"hr" : {}},
-                    {"cal" : {}}
+                    {"time" : {"suppress_form_group" : True}},
+                    {"hr" : {"suppress_form_group" : True}},
+                    {"cal" : {"suppress_form_group" : True}}
                 ]
             },
-            "cardio_complex" : {
+            "pace" : {
                 "helper" : "bs3_horizontal",
                 "wrappers" : [],
                 "label_width" : 4,
                 "control_width" : 8,
                 "fields" : [
-                    {"pace" : {}},
-                    {"pace_units" : {}},
-                    {"incline" : {}},
-                    {"incline_units" : {}},
-                    {"resisted" : {}},
-                    {"resistance_levels" : {}},
+                    {"pace" : {"suppress_form_group" : True}},
+                    {"pace_units" : {}}
+                ]
+            },
+            "incline" : {
+                "helper" : "bs3_horizontal",
+                "wrappers" : [],
+                "label_width" : 4,
+                "control_width" : 8,
+                "fields" : [
+                    {"incline" : {"suppress_form_group" : True}},
+                    {"incline_units" : {}}
+                ]
+            },
+            "resistance_cb" : {
+                "helper" : "bs3_horizontal",
+                "wrappers" : [],
+                "label_width" : 4,
+                "control_width" : 8,
+                "fields" : [
+                    {"resisted" : {"suppress_form_group" : True}}
+                ]
+            },
+            "resistance_levels" : {
+                "helper" : "bs3_horizontal",
+                "wrappers" : [],
+                "label_width" : 4,
+                "control_width" : 8,
+                "fields" : [
+                    {"resistance_levels" : {
+                        "fields" : [
+                            {"name" : {}},
+                            {"value" : {}}
+                        ]
+                    }}
                 ]
             }
         }

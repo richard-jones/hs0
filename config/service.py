@@ -14,3 +14,21 @@ ELASTIC_SEARCH_INDEX = "hs0"
 ELASTIC_SEARCH_MAPPINGS = [
     "service.exercise.ExerciseDAO"
 ]
+
+CRUD = {
+    "exercise" : {
+        "model" : "service.exercise.CRUDExercise",
+        "create" : {
+            "enable" : True
+        },
+        "retrieve" : {
+            "enable" : True
+        },
+        "update" : {
+            "enable" : True
+        },
+        "delete" : {
+            "enable" : False
+        }
+    }
+}

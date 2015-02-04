@@ -2,4 +2,3 @@
 # like this ...
 # now you can do
 # from service.models import MyObject
-from service.models.example import MyObject

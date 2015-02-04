@@ -1,43 +1,179 @@
-<form class="form-horizontal" id="exercise-form">
-
+<form id="exercise-form">
     <div class="row">
 
         <div class="col-md-6">
-            {% autoescape off %}
-            {{ form_context.render_field_group("info") }}
-            {% endautoescape %}
-
-            <button class="btn btn-success" id="save">Save</button>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="name" class="col-sm-4 control-label">Exercise Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Exercise Name">
+                    </div>
+                </div>
+                <div id="aka_list">
+                    <div id="aka_1" class="repeatable_container">
+                        <div class="form-group">
+                            <label for="aka-0" class="col-sm-4 control-label">AKA</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="aka-0" id="aka-0" placeholder="AKA">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-danger remove-aka-field" disabled><span class="glyphicon glyphicon-remove"></span></button>
+                                        <button class="btn btn-primary add-aka-field"><span class="glyphicon glyphicon-plus"></span></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description" class="col-sm-4 control-label">Description</label>
+                    <div class="col-sm-8">
+                        <textarea name="description" id="description" class="form-control" rows="10" placeholder="Description"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="classes" class="col-sm-4 control-label">Exercise Type(s)</label>
+                    <div class="col-sm-8">
+                        <select name="classes" id="classes" class="form-control" multiple>
+                            <option value="cardio">Cardio</option>
+                            <option value="weights">Weights</option>
+                            <option value="bodyweight">Bodyweight</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="muscles" class="col-sm-4 control-label">Muscles Used</label>
+                    <div class="col-sm-8">
+                        <select name="muscles" id="muscles" class="form-control" multiple>
+                            <option value="biceps">Biceps</option>
+                            <option value="triceps">Triceps</option>
+                            <option value="upper_abs">Upper Abdominals</option>
+                            <option value="lower_abs">Lower Abdominals</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-6">
+            <h2>Which aspects to track?</h2>
+
+            <div style="padding-bottom: 30px">
+            <strong>Typically for weighted or body weight exercises</strong>
+            <div class="row"><div class="col-md-12">
+                <div class="form-inline">
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="weight" id="weight" value="y"> Weight
+                    </label>
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="reps" id="reps" value="y"> Reps
+                    </label>
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="tempo" id="tempo" value="y"> Tempo
+                    </label>
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="assist" id="assist" value="y"> Assist
+                    </label>
+                </div>
+            </div></div>
+            </div>
+
+            <div style="padding-bottom: 30px">
+            <strong>Typically for cardio exercises</strong>
+            <div class="row"><div class="col-md-12">
+                <div class="form-inline">
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="time" id="time" value="y"> Time
+                    </label>
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="hr" id="hr" value="y"> Heart Rate
+                    </label>
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="cal" id="cal" value="y"> Calories
+                    </label>
+                </div>
+            </div></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-inline">
+                        <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="pace" id="pace" value="y"> Pace
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" style="padding-left: 30px">
+                        <label for="pace_unit" class="control-label sr-only">Units</label>
+                        <select name="pace_unit" id="pace_unit" class="form-control" disabled>
+                            <option value="rotation">Rotation</option>
+                            <option value="distance">Distance</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-inline">
+                        <div class="checkbox">
+                            <label>
+                              <input type="checkbox" name="incline" id="incline" value="y"> Incline
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" style="padding-left: 30px">
+                        <label for="incline_unit" class="control-label sr-only">Units</label>
+                        <select id="incline_unit" name="incline_unit" class="form-control" disabled>
+                            <option value="deg">Degrees</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
             <div class="row"><div class="col-md-12">
-                {% autoescape off %}
-                {{ form_context.render_field_group("controls") }}
-                {% endautoescape %}
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="resisted" id="resisted" value="y"> Resisted
+                    </label>
+                </div>
             </div></div>
 
             <div class="row"><div class="col-md-12">
-                {% autoescape off %}
-                {{ form_context.render_field_group("weights") }}
-                {% endautoescape %}
-            </div></div>
-
-            <div class="row"><div class="col-md-12">
-                {% autoescape off %}
-                {{ form_context.render_field_group("cardio_simple") }}
-                {% endautoescape %}
-            </div></div>
-
-            <div class="row"><div class="col-md-12">
-                {% autoescape off %}
-                {{ form_context.render_field_group("cardio_complex") }}
-                {% endautoescape %}
+                <div id="resisted-list">
+                    <div id="resistance_0" class="repeatable_container">
+                        <div class="row"><div class="col-md-12">
+                            <div class="form-group">
+                                <label for="resistance_level-0-name" class="col-sm-2 control-label sr-only">Show user</label>
+                                <div class="col-sm-3">
+                                     <input type="text" class="form-control resisted-conditional" name="resistance_level-0-name" id="resistance_level-0-name" placeholder="Show user" disabled>
+                                </div>
+                                <label for="resistance_level-0-value" class="col-sm-2 control-label sr-only">Store value</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control resisted-conditional" name="resistance_level-0-value" id="resistance_level-0-value" placeholder="Store value" disabled>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-danger remove-resisted-field resisted-conditional" disabled><span class="glyphicon glyphicon-remove"></span></button>
+                                            <button class="btn btn-primary add-resisted-field resisted-conditional" disabled><span class="glyphicon glyphicon-plus"></span></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div></div>
+                    </div>
+                </div>
             </div></div>
 
         </div>
 
     </div>
 
+    <div class="row"><div class="col-md-offset-6 col-md-1" style="padding-top: 20px; padding-bottom: 20px"><button class="btn btn-success" id="save">Save&nbsp;<span class="glyphicon glyphicon-save"></span></button></div></div>
 </form>

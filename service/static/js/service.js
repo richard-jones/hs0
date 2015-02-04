@@ -1,0 +1,174 @@
+jQuery(document).ready(function($) {
+    $.extend(octopus, {
+        page : {},
+        service: {
+            newExercise : function(params) {
+                var schema = {
+                    id : {type : "single", path : "id", coerce: String },
+                    created_date : {type : "single", path : "created_date", coerce: String},
+                    last_updated : {type : "single", path : "last_updated", coerce: String},
+
+                    name : { type : "single", path : "info.name", coerce : String},
+                    aka : {type : "list", path : "info.aka", coerce : String},
+                    description : { type : "single", path : "info.description", coerce : String },
+                    classes : { type : "list", path : "info.classes", coerce: String },
+                    muscles : { type : "list", path : "info.muscles", coerce: String},
+                    owner : { type: "single", path : "admin.owner", coerce: String },
+                    canon : { type: "single", path : "admin.canon", coerce: Boolean },
+                    weight : { type: "single", path : "track.weight", coerce: Boolean },
+                    reps : { type: "single", path : "track.reps", coerce: Boolean },
+                    tempo : { type: "single", path : "track.tempo", coerce: Boolean },
+                    assist : { type: "single", path : "track.assist", coerce: Boolean },
+                    time : { type: "single", path : "track.time", coerce: Boolean },
+                    resisted : { type: "single", path : "track.resisted", coerce: Boolean },
+                    pace : { type: "single", path : "track.pace", coerce: Boolean },
+                    pace_unit : { type: "single", path : "track.pace_units", coerce: String, allowed_values: ["rotation", "distance"]},
+                    incline : { type: "single", path : "track.incline", coerce: Boolean },
+                    incline_unit : { type: "single", path : "track.incline_units", coerce: String, allowed_values : ["deg"] },
+                    hr : { type: "single", path : "track.hr", coerce: Boolean },
+                    cal : { type: "single", path : "track.cal", coerce: Boolean },
+
+                    resistance_level : {type: "list", path: "track.resistance_levels",
+                        coerce : function(obj) {
+                            if (obj.name) { obj.name = String(obj.name) }
+                            if (obj.value) { obj.value = String(obj.value) }
+                            return obj;
+                        }
+                    }
+                };
+
+                var Exercise = function() {
+                    this.data = {};
+                    this.schema = {};
+                    this.allow_off_schema = false;
+                };
+
+                var proto = $.extend(octopus.dataobj.DataObjPrototype, octopus.service.ExercisePrototype);
+                Exercise.prototype = proto;
+
+                var dobj = new Exercise();
+                dobj.schema = schema;
+                if (params) {
+                    if (params.raw) {
+                        dobj.data = params.raw;
+                    }
+                }
+                return dobj;
+            },
+
+            ExercisePrototype : {
+
+            },
+
+            bootExerciseForm : function() {
+                function readForm() {
+                    octopus.page.data = octopus.forms.form2obj({
+                        form_selector: "#exercise-form",
+                        form_data_object: octopus.service.newExercise()
+                    });
+                    if (octopus.page.exercise_id) {
+                        octopus.page.data.set_field("id", octopus.page.exercise_id)
+                    }
+                }
+
+                $("#classes").select2();
+
+                $("#muscles").select2();
+
+                $("#pace").change(function() {
+                    if ($(this).is(":checked")) {
+                        $("#pace_unit").removeAttr("disabled");
+                    } else {
+                        $("#pace_unit").attr("disabled", "disabled");
+                    }
+                });
+
+                $("#incline").change(function() {
+                    if ($(this).is(":checked")) {
+                        $("#incline_unit").removeAttr("disabled");
+                    } else {
+                        $("#incline_unit").attr("disabled", "disabled");
+                    }
+                });
+
+                $("#resisted").change(function() {
+                    if ($(this).is(":checked")) {
+                        $(".resisted-conditional").removeAttr("disabled");
+                        // re-disable the remove button if there is only one field
+                        if ($("#resisted-list").children().length === 1) {
+                            $(".remove-resisted-field").attr("disabled", "disabled");
+                        }
+                    } else {
+                        $(".resisted-conditional").attr("disabled", "disabled");
+                    }
+                });
+
+
+                function onMoreAKA() {}
+                function onRemoveAKA() {}
+
+                octopus.forms.bindRepeatable({
+                    button_selector : ".add-aka-field",
+                    list_selector: "#aka_list",
+                    entry_prefix: "aka",
+                    enable_remove: true,
+                    remove_selector: ".remove-aka-field",
+                    remove_behaviour: "disable",
+                    // before_callback: destroyParsley,
+                    more_callback: onMoreAKA,
+                    remove_callback: onRemoveAKA
+                });
+
+                function onMoreResisted() {}
+                function onRemoveResisted() {}
+
+                octopus.forms.bindRepeatable({
+                    button_selector : ".add-resisted-field",
+                    list_selector: "#resisted-list",
+                    entry_prefix: "resistance",
+                    enable_remove: true,
+                    remove_selector: ".remove-resisted-field",
+                    remove_behaviour: "disable",
+                    // before_callback: destroyParsley,
+                    more_callback: onMoreResisted,
+                    remove_callback: onRemoveResisted
+                });
+
+                $("#save").click(function(event) {
+                    event.preventDefault();
+
+                    // first ensure that we have the latest form data
+                    readForm();
+
+                    function onSuccess(data) {
+                        octopus.page.exercise_id = data.id;
+                    }
+
+                    function onError(data) {
+                        alert("There was an error saving the exercise");
+                    }
+
+                    // now issue a create request on the CRUD API
+                    if (!octopus.page.exercise_id) {
+                        octopus.crud.create({
+                            dataobj : octopus.page.data,
+                            objtype: "exercise",
+                            success : onSuccess,
+                            complete : function() {},
+                            error : onError
+                        });
+                    } else {
+                        octopus.crud.update({
+                            id : octopus.page.exercise_id,
+                            dataobj: octopus.page.data,
+                            objtype: "exercise",
+                            success : onSuccess,
+                            complete : function() {},
+                            error : onError
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
