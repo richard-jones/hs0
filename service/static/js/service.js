@@ -71,6 +71,32 @@ jQuery(document).ready(function($) {
                     }
                 }
 
+                function destroyParsley() {
+                    if (octopus.page.exercise_form) {
+                        octopus.page.exercise_form.destroy();
+                    }
+                    $(".has-error").removeClass("has-error");
+                }
+
+                function bounceParsley() {
+                    destroyParsley();
+                    octopus.page.exercise_form = $("#exercise-form").parsley();
+
+                    // bind all the event handlers
+                    octopus.page.exercise_form.subscribe("parsley:field:error", function(fieldInstance) {
+                        fieldInstance["$element"].parents(".validation-container").addClass("has-error");
+                    });
+                }
+
+                function updateTime() {
+                    $("#last-saved").html("Last saved " + octopus.page.last_saved.fromNow());
+                }
+
+                function timedUpdate () {
+                    updateTime();
+                    setTimeout(timedUpdate, 1000);
+                }
+
                 $("#classes").select2();
 
                 $("#muscles").select2();
@@ -140,8 +166,22 @@ jQuery(document).ready(function($) {
                     // first ensure that we have the latest form data
                     readForm();
 
+                    // validate the form (triggers events, which we consume elsewhere
+                    bounceParsley();
+                    var valid = octopus.page.exercise_form.validate();
+                    if (!valid) {
+                        alert("Please fill in the required fields");
+                        return;
+                    }
+
                     function onSuccess(data) {
                         octopus.page.exercise_id = data.id;
+                        octopus.page.last_saved = moment();
+                        updateTime();
+                        if (!octopus.page.timedUpdates) {
+                            timedUpdate();
+                            octopus.page.timedUpdates = true;
+                        }
                     }
 
                     function onError(data) {
