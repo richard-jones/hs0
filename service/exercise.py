@@ -82,8 +82,9 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
                 "bools" : ["canon"]
             },
             "track" : {
+                "fields" : ["pace_unit", "incline_unit"],
                 "bools" : [
-                    "weight", "reps", "tempo", "assist", "time", "resisted", "pace", "pace_unit", "incline", "incline_unit", "hr", "cal"
+                    "weight", "reps", "tempo", "assist", "time", "resisted", "pace", "incline", "hr", "cal"
                 ],
                 "lists" : ["resistance_levels"],
                 "list_entries" : {

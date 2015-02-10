@@ -22,9 +22,9 @@ jQuery(document).ready(function($) {
                     time : { type: "single", path : "track.time", coerce: Boolean },
                     resisted : { type: "single", path : "track.resisted", coerce: Boolean },
                     pace : { type: "single", path : "track.pace", coerce: Boolean },
-                    pace_unit : { type: "single", path : "track.pace_units", coerce: String, allowed_values: ["rotation", "distance"]},
+                    pace_unit : { type: "single", path : "track.pace_unit", coerce: String, allowed_values: ["rotation", "distance"]},
                     incline : { type: "single", path : "track.incline", coerce: Boolean },
-                    incline_unit : { type: "single", path : "track.incline_units", coerce: String, allowed_values : ["deg"] },
+                    incline_unit : { type: "single", path : "track.incline_unit", coerce: String, allowed_values : ["deg"] },
                     hr : { type: "single", path : "track.hr", coerce: Boolean },
                     cal : { type: "single", path : "track.cal", coerce: Boolean },
 
