@@ -32,3 +32,9 @@ CRUD = {
         }
     }
 }
+
+FRAGMENTS = {
+    "exercise-form" : {
+        "template" : "_exercise_form.html"
+    }
+}
