@@ -28,7 +28,7 @@ jQuery(document).ready(function($) {
                     hr : { type: "single", path : "track.hr", coerce: Boolean },
                     cal : { type: "single", path : "track.cal", coerce: Boolean },
 
-                    resistance_level : {type: "list", path: "track.resistance_levels",
+                    resistance_levels : {type: "list", path: "track.resistance_levels",
                         coerce : function(obj) {
                             if (obj.name) { obj.name = String(obj.name) }
                             if (obj.value) { obj.value = String(obj.value) }
@@ -60,7 +60,44 @@ jQuery(document).ready(function($) {
 
             },
 
+            exerciseForm : function(params) {
+                var selector = params.selector;
+                var exercise_id = params.exercise_id;
+
+                function renderExerciseForm(frag) {
+                    $(selector).html(frag);
+                    octopus.service.bootExerciseForm()
+                }
+
+                function exerciseLoaded(data) {
+                    if (data) {
+                        octopus.page.data = octopus.service.newExercise({raw : data});
+                    }
+                    octopus.fragments.frag({
+                        id: "exercise-form",
+                        callback: renderExerciseForm
+                    });
+                }
+
+                function exerciseLoadFail() {
+                    alert("Failed to load exercise from API");
+                }
+
+                if (exercise_id) {
+                    octopus.page.exercise_id = exercise_id;
+                    octopus.crud.retrieve({
+                        objtype : "exercise",
+                        id : exercise_id,
+                        success : exerciseLoaded,
+                        error: exerciseLoadFail
+                    });
+                } else {
+                    exerciseLoaded();
+                }
+            },
+
             bootExerciseForm : function() {
+
                 function readForm() {
                     octopus.page.data = octopus.forms.form2obj({
                         form_selector: "#exercise-form",
@@ -69,6 +106,48 @@ jQuery(document).ready(function($) {
                     if (octopus.page.exercise_id) {
                         octopus.page.data.set_field("id", octopus.page.exercise_id)
                     }
+                }
+
+                function writeForm() {
+                    var obj = octopus.page.data;
+
+                    // expand the relevant sections of the form to accommodate repeated fields
+                    var akas = obj.get_field("aka") || [];
+                    var rls = obj.get_field("resistance_levels") || [];
+
+                    var available_akas = $("#aka_list").children().length;
+                    var available_rls = $("#resisted-list").children().length;
+
+                    var add_akas = akas.length - available_akas;
+                    if (add_akas < 0) { add_akas = 0; }
+
+                    var add_rls = rls.length - available_rls;
+                    if (add_rls < 0) { add_rls = 0; }
+
+                    for (var i = 0 ; i < add_akas; i++) {
+                        octopus.forms.repeat({
+                            list_selector : "#aka_list",
+                            entry_prefix : "aka",
+                            enable_remove: true,
+                            remove_selector: ".remove-aka-field",
+                            remove_callback: onRemoveAKA
+                        })
+                    }
+
+                    for (var i = 0 ; i < add_rls; i++) {
+                        octopus.forms.repeat({
+                            list_selector : "#resisted-list",
+                            entry_prefix : "resistance",
+                            enable_remove: true,
+                            remove_selector: ".remove-resisted-field",
+                            remove_callback: onRemoveResisted
+                        })
+                    }
+
+                    octopus.forms.obj2form({
+                        form_selector: "#exercise-form",
+                        form_data_object: octopus.page.data
+                    });
                 }
 
                 function destroyParsley() {
@@ -128,7 +207,6 @@ jQuery(document).ready(function($) {
                         $(".resisted-conditional").attr("disabled", "disabled");
                     }
                 });
-
 
                 function onMoreAKA() {}
                 function onRemoveAKA() {}
@@ -208,6 +286,10 @@ jQuery(document).ready(function($) {
                         });
                     }
                 });
+
+                if (octopus.page.exercise_id && octopus.page.data) {
+                    writeForm();
+                }
             }
         }
     });
