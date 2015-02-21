@@ -29,7 +29,9 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
             "aka" : ["<alternate names for this exercise>"],
             "description" : "<description of this exercise>",
             "classes": ["Cardio", "Legs"],   # What exercise classes does this belong to
-            "muscles" : ["Quads", "Glutes"], # Which muscles does this exercise hit
+            "movement" : ["Pull", "Push", "Rotation"]   # which kind of movement is it?
+            "main_muscles" : ["Quads", "Glutes"], # Which main muscles/groups does this exercise hit
+            "targeted_muscles" : ["Inner Bicep", "Outer Bicep"], # which specific muscles in the group does this exercise hit
         },
 
         "admin" : {
@@ -48,20 +50,24 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
 
             # typical cardio exercise
             "time": true|false,              # track time for exercise
+            "speed" : true|false,            # track the speed of an exercise
+            "distance" : true|false,         # track the distance of an exercise
+
+            "hr" : true|false,               # track heart rate
+            "cal" : true|false,              # track calories burned
 
             "resisted" : true|false,         # does this exercise have some other form of resistance (e.g. cardio machine level)
             "resistance_levels" : [          # if resisted=true, offer the user these options
                 {"name" : "<name of resistance level>", "value" : "<value to store>"}
-            ]
-
-            "pace" : true|false,             # track the pace of the exercies
-            "pace_units" : "rpm|mph|kph"     # what units to track pace with
+            ],
 
             "incline" : true|false,          # track incline
-            "incline_units" : "deg"          # units to track incline
-
-            "hr" : true|false,               # track heart rate
-            "cal" : true|false               # track calories burned
+            "incline_settings" : {           # if incline=true, offer the user these options
+                "lower" : <lower bound for incline>,
+                "upper" : <upper bound for incline>,
+                "increment" : <smallest incremental unit>,
+                "unit" : "degrees|pc"
+            }
         }
     }
     """
@@ -75,21 +81,26 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
                 "fields" : [
                     "name", "description"
                 ],
-                "lists" : ["aka", "classes", "muscles"]
+                "lists" : ["aka", "classes", "movement", "main_muscles", "targeted_muscles"]
             },
             "admin" : {
                 "fields" : ["owner"],
                 "bools" : ["canon"]
             },
             "track" : {
-                "fields" : ["pace_unit", "incline_unit"],
                 "bools" : [
-                    "weight", "reps", "tempo", "assist", "time", "resisted", "pace", "incline", "hr", "cal"
+                    "weight", "reps", "tempo", "assist", "time", "speed", "distance", "resisted", "incline", "hr", "cal"
                 ],
                 "lists" : ["resistance_levels"],
+                "objects" : ["incline_settings"],
                 "list_entries" : {
                     "resistance_levels" : {
                         "fields" : ["name", "value"]
+                    }
+                },
+                "object_entries" : {
+                    "incline_settings" : {
+                        "fields" : ["lower", "upper", "increment", "unit"]
                     }
                 }
             }
@@ -114,185 +125,3 @@ class CRUDExercise(ES_CRUD_Wrapper_Ultra):
             pass
 
         super(CRUDExercise, self).__init__(raw)
-
-# Form Reprepsentation
-######################################################
-
-PACE_CHOICES = [
-    ("rpm", "RPM"), ("mph", "MPH"), ("kmph", "KmPH")
-]
-
-INCLINE_CHOICES = [
-    ("deg", "Degrees")
-]
-
-class Admin(Form):
-    # administrative exercise data
-    owner = StringField("Owner (Admin Only)", [validators.DataRequired()])
-    canon = BooleanField("Part of the HS0 Canon?", [DataOptional()])
-
-class ResistanceLevels(Form):
-    name = StringField("Name of level")
-    value = StringField("Value to store")
-
-class Description(Form):
-    # basic metadata about the exercise
-    name = StringField("Exercise Name", [validators.DataRequired()])
-    aka = FieldList(StringField("AKA", [DataOptional()]), min_entries=1)
-    description = TextAreaField("Description", [DataOptional()])
-    classes = SelectMultipleField("Excercise Type", [validators.DataRequired()], choices=[])
-    muscles = SelectMultipleField("Muscles Worked", [validators.DataRequired()], choices=[])
-
-    # which aspects of the exercise to track
-    weight = BooleanField("Weight")
-    reps = BooleanField("Reps")
-    tempo = BooleanField("Tempo")
-    assist = BooleanField("Assistance")
-
-    time = BooleanField("Time")
-    resisted = BooleanField("Resistance")
-    pace = BooleanField("Pace")
-    incline = BooleanField("Incline")
-    hr = BooleanField("Heart Rate")
-    cal = BooleanField("Calories")
-
-    # Detailed inputs
-    pace_units = SelectField("Pace Units", choices=PACE_CHOICES)
-    incline_units = SelectField("Incline Units", choices=INCLINE_CHOICES)
-    resistance_levels = FieldList(FormField(ResistanceLevels), min_entries=1)
-
-class Controls(Form):
-    cardio = BooleanField("Cardio?")
-    weights = BooleanField("Weights?")
-    bodyweight = BooleanField("Bodyweight?")
-
-class PublicExerciseForm(Description, Controls):
-    pass
-
-class AdminExerciseForm(Admin, Description, Controls):
-    pass
-
-# The form context
-#################################################################################################
-
-class PublicFormContext(FormContext):
-    def make_renderer(self):
-        self.renderer = ExerciseRenderer()
-
-    def set_template(self):
-        self.template = "exercise.html"
-
-    def pre_validate(self):
-        pass
-
-    def blank_form(self):
-        self.form = PublicExerciseForm()
-
-    def data2form(self):
-        self.form = PublicExerciseForm(formdata=self.form_data)
-
-    def source2form(self):
-        pass
-
-    def form2target(self):
-        pass
-
-    def patch_target(self):
-        pass
-
-class ExerciseRenderer(Renderer):
-    def __init__(self):
-        super(ExerciseRenderer, self).__init__()
-
-        self.FIELD_GROUPS = {
-            "info" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"name" : {"attributes" : {"data-parsley-required" : "true"}}},
-                    {"aka" : {}},
-                    {"description" : {}},
-                    {"classes" : {}},
-                    {"muscles" : {}}
-                ]
-            },
-            "controls" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"cardio" : {}},
-                    {"weights" : {}},
-                    {"bodyweight" : {}}
-                ]
-            },
-            "weights" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"weight" : {"suppress_form_group" : True}},
-                    {"reps" : {"suppress_form_group" : True}},
-                    {"tempo" : {"suppress_form_group" : True}},
-                    {"assist" : {"suppress_form_group" : True}}
-                ]
-            },
-            "cardio_simple" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"time" : {"suppress_form_group" : True}},
-                    {"hr" : {"suppress_form_group" : True}},
-                    {"cal" : {"suppress_form_group" : True}}
-                ]
-            },
-            "pace" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"pace" : {"suppress_form_group" : True}},
-                    {"pace_units" : {}}
-                ]
-            },
-            "incline" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"incline" : {"suppress_form_group" : True}},
-                    {"incline_units" : {}}
-                ]
-            },
-            "resistance_cb" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"resisted" : {"suppress_form_group" : True}}
-                ]
-            },
-            "resistance_levels" : {
-                "helper" : "bs3_horizontal",
-                "wrappers" : [],
-                "label_width" : 4,
-                "control_width" : 8,
-                "fields" : [
-                    {"resistance_levels" : {
-                        "fields" : [
-                            {"name" : {}},
-                            {"value" : {}}
-                        ]
-                    }}
-                ]
-            }
-        }

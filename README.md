@@ -67,7 +67,9 @@ Then, start your app with
         "aka" : ["<alternate names for this exercise>"],
         "description" : "<description of this exercise>",
         "classes": ["Cardio", "Legs"],   # What exercise classes does this belong to
-        "muscles" : ["Quads", "Glutes"], # Which muscles does this exercise hit
+        "movement" : ["Pull", "Push", "Rotation"]   # which kind of movement is it?
+        "main_muscles" : ["Quads", "Glutes"], # Which main muscles/groups does this exercise hit
+        "targeted_muscles" : ["Inner Bicep", "Outer Bicep"], # which specific muscles in the group does this exercise hit
     },
     
     "admin" : {
@@ -86,20 +88,24 @@ Then, start your app with
         
         # typical cardio exercise
         "time": true|false,              # track time for exercise
+        "speed" : true|false,            # track the speed of an exercise
+        "distance" : true|false,         # track the distance of an exercise
+        
+        "hr" : true|false,               # track heart rate
+        "cal" : true|false,              # track calories burned
         
         "resisted" : true|false,         # does this exercise have some other form of resistance (e.g. cardio machine level)
         "resistance_levels" : [          # if resisted=true, offer the user these options
             {"name" : "<name of resistance level>", "value" : "<value to store>"}
-        ]
-        
-        "pace" : true|false,             # track the pace of the exercies     
-        "pace_units" : "rpm|mph|kph"     # what units to track pace with 
+        ],
         
         "incline" : true|false,          # track incline
-        "incline_units" : "deg"          # units to track incline
-        
-        "hr" : true|false,               # track heart rate
-        "cal" : true|false               # track calories burned
+        "incline_settings" : {           # if incline=true, offer the user these options
+            "lower" : <lower bound for incline>,
+            "upper" : <upper bound for incline>,
+            "increment" : <smallest incremental unit>,
+            "unit" : "degrees|pc"
+        }
     }
 }
 ```

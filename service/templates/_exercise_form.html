@@ -1,4 +1,10 @@
 <form id="exercise-form" data-parsley-ui-enabled="false">
+    <div id="general_error" style="display:none">
+        <div class="alert alert-danger" role="alert">
+            <strong>Please check the form for errors</strong> - Fields marked with a * are required
+        </div>
+    </div>
+
     <div class="row">
 
         <div class="col-md-6">
@@ -41,14 +47,39 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group validation-container">
-                    <label for="muscles" class="col-sm-4 control-label">Muscle(s) Used&nbsp;<span class="required">*</span></label>
+                <div class="form-group">
+                    <label for="movement" class="col-sm-4 control-label">Movement(s)</label>
                     <div class="col-sm-8">
-                        <select name="muscles" id="muscles" class="form-control" multiple data-parsley-required="true">
+                        <select name="movement" id="movement" class="form-control" multiple>
+                            <option value="cardio">Push</option>
+                            <option value="weights">Pull</option>
+                            <option value="bodyweight">Rotation</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group validation-container">
+                    <label for="main_muscles" class="col-sm-4 control-label">Main Muscle(s)&nbsp;<span class="required">*</span></label>
+                    <div class="col-sm-8">
+                        <select name="main_muscles" id="main_muscles" class="form-control" multiple data-parsley-required="true">
                             <option value="biceps">Biceps</option>
                             <option value="triceps">Triceps</option>
-                            <option value="upper_abs">Upper Abdominals</option>
-                            <option value="lower_abs">Lower Abdominals</option>
+                            <option value="upper_abs">Abdominals</option>
+                            <option value="delt">Deltoid</option>
+                            <option value="calf">Calf</option>
+                            <option value="glute">Glute</option>
+                            <option value="hamstrings">Hamstrings</option>
+                            <option value="quads">Quads</option>
+                            <option value="forearms">Forearms</option>
+                            <option value="traps">Traps</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group validation-container">
+                    <label for="targeted_muscles" class="col-sm-4 control-label">Targeted Muscle(s)</label>
+                    <div class="col-sm-8">
+                        <select name="targeted_muscles" id="targeted_muscles" class="form-control" multiple>
+                            <option value="outer_bicep">Outer Bicep</option>
+                            <option value="inner_bicep">Inner Bicep</option>
                         </select>
                     </div>
                 </div>
@@ -80,11 +111,23 @@
 
             <div style="padding-bottom: 30px">
             <strong>Typically for cardio exercises</strong>
+
             <div class="row"><div class="col-md-12">
                 <div class="form-inline">
                     <label class="checkbox-inline">
                       <input type="checkbox" name="time" id="time" value="y"> Time
                     </label>
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="speed" id="speed" value="y"> Speed
+                    </label>
+                    <label class="checkbox-inline">
+                      <input type="checkbox" name="distance" id="distance" value="y"> Distance
+                    </label>
+                </div>
+            </div></div>
+
+            <div class="row"><div class="col-md-12">
+                <div class="form-inline">
                     <label class="checkbox-inline">
                       <input type="checkbox" name="hr" id="hr" value="y"> Heart Rate
                     </label>
@@ -96,42 +139,48 @@
             </div>
 
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-12">
                     <div class="form-inline">
-                        <div class="checkbox">
-                            <label>
-                              <input type="checkbox" name="pace" id="pace" value="y"> Pace
-                            </label>
-                        </div>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="incline" id="incline" value="y"> Incline
+                        </label>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group" style="padding-left: 30px">
-                        <label for="pace_unit" class="control-label sr-only">Units</label>
-                        <select name="pace_unit" id="pace_unit" class="form-control" disabled>
-                            <option value="rotation">Rotation</option>
-                            <option value="distance">Distance</option>
-                        </select>
+                    <div id="incline_error" class="col-sm-offset-3 col-sm-6 required" style="display:none">
+                        Please make sure you only put numbers in the boxes below
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-2">
-                    <div class="form-inline">
-                        <div class="checkbox">
-                            <label>
-                              <input type="checkbox" name="incline" id="incline" value="y"> Incline
-                            </label>
+                <div class="col-md-12">
+                    <div class="form-horizontal">
+                        <div class="form-group validation-container">
+                            <label for="incline_lower" class="col-sm-3 control-label">Lower limit</label>
+                            <div class="col-sm-4">
+                                <input type="text" value="0" name="incline_lower" step="1" id="incline_lower" class="form-control" placeholder="Lower limit" disabled data-parsley-type="number" data-parsley-required="false">
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group" style="padding-left: 30px">
-                        <label for="incline_unit" class="control-label sr-only">Units</label>
-                        <select id="incline_unit" name="incline_unit" class="form-control" disabled>
-                            <option value="deg">Degrees</option>
-                        </select>
+                        <div class="form-group validation-container">
+                            <label for="incline_upper" class="col-sm-3 control-label">Upper limit</label>
+                            <div class="col-sm-4">
+                                <input type="text" value="20" name="incline_upper" step="1" id="incline_upper" class="form-control" placeholder="Upper limit" disabled data-parsley-type="number" data-parsley-required="false">
+                            </div>
+                        </div>
+                        <div class="form-group validation-container">
+                            <label for="incline_increment" class="col-sm-3 control-label">Increment</label>
+                            <div class="col-sm-4">
+                                <input type="text" value="0.5" name="incline_increment" id="incline_increment" class="form-control" placeholder="Increment" disabled data-parsley-type="number" data-parsley-required="false">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="incline_unit" class="col-sm-3 control-label">Units</label>
+                            <div class="col-sm-4">
+                                <select id="incline_unit" name="incline_unit" class="form-control" disabled>
+                                    <option value="pc">%</option>
+                                    <option value="degrees">Degrees</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

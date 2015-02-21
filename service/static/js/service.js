@@ -12,7 +12,9 @@ jQuery(document).ready(function($) {
                     aka : {type : "list", path : "info.aka", coerce : String},
                     description : { type : "single", path : "info.description", coerce : String },
                     classes : { type : "list", path : "info.classes", coerce: String },
-                    muscles : { type : "list", path : "info.muscles", coerce: String},
+                    movement : { type: "list", path: "info.movement", coerce: String },
+                    main_muscles : { type : "list", path : "info.main_muscles", coerce: String},
+                    targeted_muscles : { type: "list", path: "info.targeted_muscles", coerce: String },
                     owner : { type: "single", path : "admin.owner", coerce: String },
                     canon : { type: "single", path : "admin.canon", coerce: Boolean },
                     weight : { type: "single", path : "track.weight", coerce: Boolean },
@@ -20,11 +22,14 @@ jQuery(document).ready(function($) {
                     tempo : { type: "single", path : "track.tempo", coerce: Boolean },
                     assist : { type: "single", path : "track.assist", coerce: Boolean },
                     time : { type: "single", path : "track.time", coerce: Boolean },
+                    speed : { type: "single", path : "track.speed", coerce: Boolean },
+                    distance : { type: "single", path: "track.distance", coerce: Boolean },
                     resisted : { type: "single", path : "track.resisted", coerce: Boolean },
-                    pace : { type: "single", path : "track.pace", coerce: Boolean },
-                    pace_unit : { type: "single", path : "track.pace_unit", coerce: String, allowed_values: ["rotation", "distance"]},
                     incline : { type: "single", path : "track.incline", coerce: Boolean },
-                    incline_unit : { type: "single", path : "track.incline_unit", coerce: String, allowed_values : ["deg"] },
+                    incline_lower : { type: "single", path : "track.incline_settings.lower", coerce:  parseFloat},
+                    incline_upper : { type: "single", path : "track.incline_settings.upper", coerce:  parseFloat},
+                    incline_increment : { type: "single", path : "track.incline_settings.increment", coerce:  parseFloat},
+                    incline_unit : { type: "single", path : "track.incline_settings.unit", coerce: String, allowed_values : ["degrees", "pc"] },
                     hr : { type: "single", path : "track.hr", coerce: Boolean },
                     cal : { type: "single", path : "track.cal", coerce: Boolean },
 
@@ -163,12 +168,11 @@ jQuery(document).ready(function($) {
 
                     // finally, enable/disable the relevant sections based on what was already
                     // checked in the checkboxes
-                    $("#pace").trigger("change");
                     $("#incline").trigger("change");
                     $("#resisted").trigger("change");
 
                     // update the last saved time
-                    octopus.page.last_saved = moment(octopus.page.data.get_field("last_updated"))
+                    octopus.page.last_saved = moment(octopus.page.data.get_field("last_updated"));
                     triggerTimeUpdates();
                 }
 
@@ -177,6 +181,8 @@ jQuery(document).ready(function($) {
                         octopus.page.exercise_form.destroy();
                     }
                     $(".has-error").removeClass("has-error");
+                    $("#incline_error").hide();
+                    $("#general_error").hide();
                 }
 
                 function bounceParsley() {
@@ -186,6 +192,9 @@ jQuery(document).ready(function($) {
                     // bind all the event handlers
                     octopus.page.exercise_form.subscribe("parsley:field:error", function(fieldInstance) {
                         fieldInstance["$element"].parents(".validation-container").addClass("has-error");
+                        if (octopus.string.startsWith(fieldInstance["$element"].attr("name"), "incline_")) {
+                            $("#incline_error").show();
+                        }
                     });
                 }
 
@@ -205,23 +214,23 @@ jQuery(document).ready(function($) {
                     }
                 }
 
-                $("#classes").select2();
-
-                $("#muscles").select2();
-
-                $("#pace").change(function() {
-                    if ($(this).is(":checked")) {
-                        $("#pace_unit").removeAttr("disabled");
-                    } else {
-                        $("#pace_unit").attr("disabled", "disabled");
-                    }
-                });
+                // all the select2 fields
+                $("#classes").select2({placeholder : "Select an exercise type"});
+                $("#movement").select2({placeholder : "Select a movement type"});
+                $("#main_muscles").select2({placeholder : "Select the main muscle groups involved"});
+                $("#targeted_muscles").select2({placeholder : "Select the muscles within the group that are targeted"});
 
                 $("#incline").change(function() {
                     if ($(this).is(":checked")) {
-                        $("#incline_unit").removeAttr("disabled");
+                        $("#incline_unit").removeAttr("disabled").attr("data-parsley-required", "true");
+                        $("#incline_lower").removeAttr("disabled").attr("data-parsley-required", "true");
+                        $("#incline_upper").removeAttr("disabled").attr("data-parsley-required", "true");
+                        $("#incline_increment").removeAttr("disabled").attr("data-parsley-required", "true");
                     } else {
-                        $("#incline_unit").attr("disabled", "disabled");
+                        $("#incline_unit").attr("disabled", "disabled").attr("data-parsley-required", "false");
+                        $("#incline_lower").attr("disabled", "disabled").attr("data-parsley-required", "false");
+                        $("#incline_upper").attr("disabled", "disabled").attr("data-parsley-required", "false");
+                        $("#incline_increment").attr("disabled", "disabled").attr("data-parsley-required", "false");
                     }
                 });
 
@@ -277,7 +286,7 @@ jQuery(document).ready(function($) {
                     bounceParsley();
                     var valid = octopus.page.exercise_form.validate();
                     if (!valid) {
-                        alert("Please fill in the required fields");
+                        $("#general_error").show();
                         return;
                     }
 
