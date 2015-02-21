@@ -24,10 +24,18 @@ if __name__ == "__main__":
 from flask import render_template, make_response
 from octopus.lib.webapp import custom_static, jsonp
 
+@app.route("/")
+def root():
+    return render_template("index.html")
+
 @app.route("/exercise")
 @app.route("/exercise/<exercise_id>")
 def exercise(exercise_id=None):
     return render_template("exercise.html", exercise_id=exercise_id)
+
+@app.route("/exercises")
+def exercises():
+    return render_template("exercises.html")
 
 # this allows us to override the standard static file handling with our own dynamic version
 @app.route("/static/<path:filename>")

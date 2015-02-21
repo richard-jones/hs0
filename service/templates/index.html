@@ -2,7 +2,12 @@
 
 {% block content %}
 
-Hello There
+<h1>Welcome to Hench Station Zero</h1>
+
+<ul>
+    <li><a href="{{ url_for('exercise') }}">Define an exercise</a></li>
+    <li><a href="{{ url_for('exercises') }}">Browse exercise database</a></li>
+</ul>
 
 {% endblock %}
 

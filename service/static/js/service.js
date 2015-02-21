@@ -57,7 +57,16 @@ jQuery(document).ready(function($) {
             },
 
             ExercisePrototype : {
-
+                short_desc : function(len) {
+                    var desc = this.get_field("description");
+                    if (desc === undefined) {
+                        return "";
+                    }
+                    if (desc.length <= len + 3) {
+                        return desc
+                    }
+                    return desc.substring(0, len) + "..."
+                }
             },
 
             exerciseForm : function(params) {
@@ -129,6 +138,7 @@ jQuery(document).ready(function($) {
                             list_selector : "#aka_list",
                             entry_prefix : "aka",
                             enable_remove: true,
+                            remove_behaviour: "disable",
                             remove_selector: ".remove-aka-field",
                             remove_callback: onRemoveAKA
                         })
@@ -139,15 +149,27 @@ jQuery(document).ready(function($) {
                             list_selector : "#resisted-list",
                             entry_prefix : "resistance",
                             enable_remove: true,
+                            remove_behaviour: "disable",
                             remove_selector: ".remove-resisted-field",
                             remove_callback: onRemoveResisted
                         })
                     }
 
+                    // now write the object to the form
                     octopus.forms.obj2form({
                         form_selector: "#exercise-form",
                         form_data_object: octopus.page.data
                     });
+
+                    // finally, enable/disable the relevant sections based on what was already
+                    // checked in the checkboxes
+                    $("#pace").trigger("change");
+                    $("#incline").trigger("change");
+                    $("#resisted").trigger("change");
+
+                    // update the last saved time
+                    octopus.page.last_saved = moment(octopus.page.data.get_field("last_updated"))
+                    triggerTimeUpdates();
                 }
 
                 function destroyParsley() {
@@ -174,6 +196,13 @@ jQuery(document).ready(function($) {
                 function timedUpdate () {
                     updateTime();
                     setTimeout(timedUpdate, 1000);
+                }
+
+                function triggerTimeUpdates() {
+                    if (!octopus.page.timedUpdates) {
+                        timedUpdate();
+                        octopus.page.timedUpdates = true;
+                    }
                 }
 
                 $("#classes").select2();
@@ -256,10 +285,7 @@ jQuery(document).ready(function($) {
                         octopus.page.exercise_id = data.id;
                         octopus.page.last_saved = moment();
                         updateTime();
-                        if (!octopus.page.timedUpdates) {
-                            timedUpdate();
-                            octopus.page.timedUpdates = true;
-                        }
+                        triggerTimeUpdates();
                     }
 
                     function onError(data) {

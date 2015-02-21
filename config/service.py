@@ -38,3 +38,16 @@ FRAGMENTS = {
         "template" : "_exercise_form.html"
     }
 }
+
+QUERY_ROUTE = {
+    "query" : {                                 # the URL route at which it is mounted
+        "exercise" : {                             # the URL name for the index type being queried
+            "auth" : False,                     # whether the route requires authentication
+            "role" : None,                      # if authenticated, what role is required to access the query endpoint
+            "filters" : [],                     # names of the standard filters to apply to the query
+            "dao" : "service.exercise.ExerciseDAO"       # classpath for DAO which accesses the underlying ES index
+        }
+    }
+}
+
+CLIENTJS_EXERCISE_ENDPOINT = "/query/exercise"
