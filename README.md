@@ -106,6 +106,10 @@ Then, start your app with
             "increment" : <smallest incremental unit>,
             "unit" : "degrees|pc"
         }
+    },
+    
+    "index" : {                         # fields used to make searching/indexing easier
+        "name" : ["<name or aka">]
     }
 }
 ```

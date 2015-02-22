@@ -36,6 +36,9 @@ CRUD = {
 FRAGMENTS = {
     "exercise-form" : {
         "template" : "_exercise_form.html"
+    },
+    "exercise-result" : {
+        "template" : "_exercise_result.html"
     }
 }
 

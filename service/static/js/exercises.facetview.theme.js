@@ -7,39 +7,51 @@ jQuery(document).ready(function($) {
 
     function discoveryRecordView(options, record) {
         var exercise = octopus.service.newExercise({raw : record});
+        var display_frag = octopus.fragments.cached({ id : "exercise-result" });
 
-        var name = exercise.get_field("name");
-        var desc = exercise.short_desc(100);
+        var name = octopus.string.escapeHtml(exercise.get_field("name"));
+        var desc = octopus.string.escapeHtml(exercise.short_desc(100));
+        var eid = octopus.string.escapeHtml(exercise.get_field("id"));
+
+        display_frag = display_frag.replace(/{Exercise Name}/g, name);
+        display_frag = display_frag.replace(/{Short exercise description}/g, desc);
+        display_frag = display_frag.replace(/{exercise id}/g, eid);
 
         var result = options.resultwrap_start;
-        result += "<div class='row'>";
-        result += "<div class='col-md-9'>";
-        result += "<strong style='font-size: 150%'>" + name + "</strong><br>";
-        result += "<p>" + desc + "</p>";
-        result += "<div class='col-md-3'>";
-        result += "</div></div>";
+        result += display_frag;
         result += options.resultwrap_end;
         return result;
     }
 
-    var facets = [];
-    facets.push({'field': 'classes', 'display': 'Exercise Type'});
-    facets.push({'field': 'muscles', 'display': 'Muscles Used'});
 
-    $('#exercises').facetview({
-        debug: false,
-        search_url : octopus.config.exercise_endpoint, // defined in the template which calls this
-        page_size : 25,
-        facets : facets,
-        search_sortby : [
-            {'display':'Name','field':'name'},      // should be an index field like index.name
-        ],
-        searchbox_fieldselect : [
-            {'display':'Name','field':'name'},      // that will mean that the search box can work on index.name too
-            {'display':'AKA','field':'aka'},
-            {'display':"Description", field: "description"}
-        ],
-        render_result_record : discoveryRecordView
+    function doExerciseFacetview() {
+
+        var facets = [];
+        facets.push({'field': 'classes', 'display': 'Exercise Type'});
+        facets.push({'field': 'movement', 'display': 'Movement'});
+        facets.push({'field': 'main_muscles', 'display': 'Main Muscles'});
+        facets.push({'field': 'targeted_muscles', 'display': 'Targeted Muscles'});
+
+        $('#exercises').facetview({
+            debug: false,
+            search_url : octopus.config.exercise_endpoint,
+            page_size : 25,
+            facets : facets,
+            search_sortby : [
+                {'display':'Primary Name','field':'name'},
+            ],
+            searchbox_fieldselect : [
+                {'display':'Name/AKA','field':'index.name'},
+                {'display':"Description", field: "description"}
+            ],
+            render_result_record : discoveryRecordView
+            // post_render_callback: bindButtons
+        });
+    }
+
+    octopus.fragments.preload({
+        id : "exercise-result",
+        callback : doExerciseFacetview
     });
 
 });

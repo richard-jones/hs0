@@ -68,6 +68,10 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
                 "increment" : <smallest incremental unit>,
                 "unit" : "degrees|pc"
             }
+        },
+
+        "index" : {                         # fields used to make searching/indexing easier
+            "name" : ["<name or aka">]
         }
     }
     """
@@ -75,7 +79,7 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
         "fields" : [
             "id", "created_date", "last_updated"
         ],
-        "objects" : ["info", "admin", "track"],
+        "objects" : ["info", "admin", "track", "index"],
         "object_entries" : {
             "info" : {
                 "fields" : [
@@ -103,9 +107,35 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
                         "fields" : ["lower", "upper", "increment", "unit"]
                     }
                 }
+            },
+            "index" : {
+                "lists" : ["name"]
             }
         }
     }
+
+    @property
+    def name(self):
+        return self._get_single("info.name", self._utf8_unicode())
+
+    @property
+    def aka(self):
+        return self._get_list("info.aka", self._utf8_unicode())
+
+    @property
+    def indexed_name(self):
+        return self._get_list("index.name", self._utf8_unicode())
+
+    @indexed_name.setter
+    def indexed_name(self, val):
+        self._set_list("index.name", val, self._utf8_unicode())
+
+    def prep(self):
+        super(Exercise, self).prep()
+        n = self.name
+        a = self.aka
+        self.indexed_name = [n] + a
+
 
 # CRUD interface
 ######################################################
