@@ -155,12 +155,6 @@
                 <div class="col-md-12">
                     <div class="form-horizontal">
                         <div class="form-group validation-container">
-                            <label for="incline_lower" class="col-sm-3 control-label">Lower limit</label>
-                            <div class="col-sm-4">
-                                <input type="text" value="0" name="incline_lower" step="1" id="incline_lower" class="form-control" placeholder="Lower limit" disabled data-parsley-type="number" data-parsley-required="false">
-                            </div>
-                        </div>
-                        <div class="form-group validation-container">
                             <label for="incline_upper" class="col-sm-3 control-label">Upper limit</label>
                             <div class="col-sm-4">
                                 <input type="text" value="20" name="incline_upper" step="1" id="incline_upper" class="form-control" placeholder="Upper limit" disabled data-parsley-type="number" data-parsley-required="false">
@@ -185,40 +179,37 @@
                 </div>
             </div>
 
-            <div class="row"><div class="col-md-12">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="resisted" id="resisted" value="y"> Resisted
-                    </label>
-                </div>
-            </div></div>
-
-            <div class="row"><div class="col-md-12">
-                <div id="resisted-list">
-                    <div id="resistance_0" class="repeatable_container">
-                        <div class="row"><div class="col-md-12">
-                            <div class="form-group">
-                                <label for="resistance_levels-0-name" class="col-sm-2 control-label sr-only">Show user</label>
-                                <div class="col-sm-3">
-                                     <input type="text" class="form-control resisted-conditional" name="resistance_levels-0-name" id="resistance_levels-0-name" placeholder="Show user" disabled>
-                                </div>
-                                <label for="resistance_levels-0-value" class="col-sm-2 control-label sr-only">Store value</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control resisted-conditional" name="resistance_levels-0-value" id="resistance_levels-0-value" placeholder="Store value" disabled>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="input-group">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-danger remove-resisted-field resisted-conditional" disabled><span class="glyphicon glyphicon-remove"></span></button>
-                                            <button class="btn btn-primary add-resisted-field resisted-conditional" disabled><span class="glyphicon glyphicon-plus"></span></button>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="resisted" id="resisted" value="y"> Resisted
+                        </label>
+                    </div>
+                    <div id="resisted_error" class="col-sm-offset-3 col-sm-6 required" style="display:none">
+                        Please make sure you only put numbers in the boxes below
                     </div>
                 </div>
-            </div></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-horizontal">
+                        <div class="form-group validation-container">
+                            <label for="resistance_upper" class="col-sm-3 control-label">Upper limit</label>
+                            <div class="col-sm-4">
+                                <input type="text" value="20" name="resistance_upper" step="1" id="resistance_upper" class="form-control" placeholder="Upper limit" disabled data-parsley-type="number" data-parsley-required="false">
+                            </div>
+                        </div>
+                        <div class="form-group validation-container">
+                            <label for="resistance_increment" class="col-sm-3 control-label">Increment</label>
+                            <div class="col-sm-4">
+                                <input type="text" value="1" name="resistance_increment" id="resistance_increment" class="form-control" placeholder="Increment" disabled data-parsley-type="number" data-parsley-required="false">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
 

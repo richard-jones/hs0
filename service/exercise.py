@@ -57,13 +57,13 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
             "cal" : true|false,              # track calories burned
 
             "resisted" : true|false,         # does this exercise have some other form of resistance (e.g. cardio machine level)
-            "resistance_levels" : [          # if resisted=true, offer the user these options
-                {"name" : "<name of resistance level>", "value" : "<value to store>"}
-            ],
+            "resistance_settings" : {         # if resisted=true, offer the user these options
+                "upper" : <upper bound for resistance>,
+                "increment" : <smallest incremental unit>,
+            },
 
             "incline" : true|false,          # track incline
             "incline_settings" : {           # if incline=true, offer the user these options
-                "lower" : <lower bound for incline>,
                 "upper" : <upper bound for incline>,
                 "increment" : <smallest incremental unit>,
                 "unit" : "degrees|pc"
@@ -95,16 +95,13 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
                 "bools" : [
                     "weight", "reps", "tempo", "assist", "time", "speed", "distance", "resisted", "incline", "hr", "cal"
                 ],
-                "lists" : ["resistance_levels"],
-                "objects" : ["incline_settings"],
-                "list_entries" : {
-                    "resistance_levels" : {
-                        "fields" : ["name", "value"]
-                    }
-                },
+                "objects" : ["resistance_settings", "incline_settings"],
                 "object_entries" : {
+                    "resistance_settings" : {
+                        "fields" : ["upper", "increment"]
+                    },
                     "incline_settings" : {
-                        "fields" : ["lower", "upper", "increment", "unit"]
+                        "fields" : ["upper", "increment", "unit"]
                     }
                 }
             },

@@ -25,21 +25,14 @@ jQuery(document).ready(function($) {
                     speed : { type: "single", path : "track.speed", coerce: Boolean },
                     distance : { type: "single", path: "track.distance", coerce: Boolean },
                     resisted : { type: "single", path : "track.resisted", coerce: Boolean },
+                    resistance_upper : { type: "single", path: "track.resistance_settings.upper", coerce: parseFloat },
+                    resistance_increment : {type : "single", path: "track.resistance_settings.increment", coerce: parseFloat},
                     incline : { type: "single", path : "track.incline", coerce: Boolean },
-                    incline_lower : { type: "single", path : "track.incline_settings.lower", coerce:  parseFloat},
                     incline_upper : { type: "single", path : "track.incline_settings.upper", coerce:  parseFloat},
                     incline_increment : { type: "single", path : "track.incline_settings.increment", coerce:  parseFloat},
                     incline_unit : { type: "single", path : "track.incline_settings.unit", coerce: String, allowed_values : ["degrees", "pc"] },
                     hr : { type: "single", path : "track.hr", coerce: Boolean },
-                    cal : { type: "single", path : "track.cal", coerce: Boolean },
-
-                    resistance_levels : {type: "list", path: "track.resistance_levels",
-                        coerce : function(obj) {
-                            if (obj.name) { obj.name = String(obj.name) }
-                            if (obj.value) { obj.value = String(obj.value) }
-                            return obj;
-                        }
-                    }
+                    cal : { type: "single", path : "track.cal", coerce: Boolean }
                 };
 
                 var Exercise = function() {
@@ -127,36 +120,19 @@ jQuery(document).ready(function($) {
 
                     // expand the relevant sections of the form to accommodate repeated fields
                     var akas = obj.get_field("aka") || [];
-                    var rls = obj.get_field("resistance_levels") || [];
-
                     var available_akas = $("#aka_list").children().length;
-                    var available_rls = $("#resisted-list").children().length;
 
                     var add_akas = akas.length - available_akas;
                     if (add_akas < 0) { add_akas = 0; }
 
-                    var add_rls = rls.length - available_rls;
-                    if (add_rls < 0) { add_rls = 0; }
-
                     for (var i = 0 ; i < add_akas; i++) {
                         octopus.forms.repeat({
-                            list_selector : "#aka_list",
-                            entry_prefix : "aka",
+                            list_selector: "#aka_list",
+                            entry_prefix: "aka",
                             enable_remove: true,
                             remove_behaviour: "disable",
                             remove_selector: ".remove-aka-field",
                             remove_callback: onRemoveAKA
-                        })
-                    }
-
-                    for (var i = 0 ; i < add_rls; i++) {
-                        octopus.forms.repeat({
-                            list_selector : "#resisted-list",
-                            entry_prefix : "resistance",
-                            enable_remove: true,
-                            remove_behaviour: "disable",
-                            remove_selector: ".remove-resisted-field",
-                            remove_callback: onRemoveResisted
                         })
                     }
 
@@ -182,6 +158,7 @@ jQuery(document).ready(function($) {
                     }
                     $(".has-error").removeClass("has-error");
                     $("#incline_error").hide();
+                    $("#resisted_error").hide();
                     $("#general_error").hide();
                 }
 
@@ -194,6 +171,9 @@ jQuery(document).ready(function($) {
                         fieldInstance["$element"].parents(".validation-container").addClass("has-error");
                         if (octopus.string.startsWith(fieldInstance["$element"].attr("name"), "incline_")) {
                             $("#incline_error").show();
+                        }
+                        if (octopus.string.startsWith(fieldInstance["$element"].attr("name"), "resistance_")) {
+                            $("#resisted_error").show();
                         }
                     });
                 }
@@ -223,12 +203,10 @@ jQuery(document).ready(function($) {
                 $("#incline").change(function() {
                     if ($(this).is(":checked")) {
                         $("#incline_unit").removeAttr("disabled").attr("data-parsley-required", "true");
-                        $("#incline_lower").removeAttr("disabled").attr("data-parsley-required", "true");
                         $("#incline_upper").removeAttr("disabled").attr("data-parsley-required", "true");
                         $("#incline_increment").removeAttr("disabled").attr("data-parsley-required", "true");
                     } else {
                         $("#incline_unit").attr("disabled", "disabled").attr("data-parsley-required", "false");
-                        $("#incline_lower").attr("disabled", "disabled").attr("data-parsley-required", "false");
                         $("#incline_upper").attr("disabled", "disabled").attr("data-parsley-required", "false");
                         $("#incline_increment").attr("disabled", "disabled").attr("data-parsley-required", "false");
                     }
@@ -236,13 +214,11 @@ jQuery(document).ready(function($) {
 
                 $("#resisted").change(function() {
                     if ($(this).is(":checked")) {
-                        $(".resisted-conditional").removeAttr("disabled");
-                        // re-disable the remove button if there is only one field
-                        if ($("#resisted-list").children().length === 1) {
-                            $(".remove-resisted-field").attr("disabled", "disabled");
-                        }
+                        $("#resistance_upper").removeAttr("disabled").attr("data-parsley-required", "true");
+                        $("#resistance_increment").removeAttr("disabled").attr("data-parsley-required", "true");
                     } else {
-                        $(".resisted-conditional").attr("disabled", "disabled");
+                        $("#resistance_upper").attr("disabled", "disabled").attr("data-parsley-required", "false");
+                        $("#resistance_increment").attr("disabled", "disabled").attr("data-parsley-required", "false");
                     }
                 });
 
@@ -261,23 +237,11 @@ jQuery(document).ready(function($) {
                     remove_callback: onRemoveAKA
                 });
 
-                function onMoreResisted() {}
-                function onRemoveResisted() {}
-
-                octopus.forms.bindRepeatable({
-                    button_selector : ".add-resisted-field",
-                    list_selector: "#resisted-list",
-                    entry_prefix: "resistance",
-                    enable_remove: true,
-                    remove_selector: ".remove-resisted-field",
-                    remove_behaviour: "disable",
-                    // before_callback: destroyParsley,
-                    more_callback: onMoreResisted,
-                    remove_callback: onRemoveResisted
-                });
-
                 $("#save").click(function(event) {
                     event.preventDefault();
+
+                    // disable the save button, to avoid multiple presses
+                    $(this).attr("disabled", "disabled");
 
                     // first ensure that we have the latest form data
                     readForm();
@@ -291,10 +255,13 @@ jQuery(document).ready(function($) {
                     }
 
                     function onSuccess(data) {
-                        octopus.page.exercise_id = data.id;
+                        if (data.id) {
+                            octopus.page.exercise_id = data.id;
+                        }
                         octopus.page.last_saved = moment();
                         updateTime();
                         triggerTimeUpdates();
+                        // $("#save").removeAttr("disabled");
                     }
 
                     function onError(data) {
@@ -320,6 +287,10 @@ jQuery(document).ready(function($) {
                             error : onError
                         });
                     }
+                });
+
+                $("#exercise-form").find(":input").change(function() {
+                    $("#save").removeAttr("disabled");
                 });
 
                 if (octopus.page.exercise_id && octopus.page.data) {
