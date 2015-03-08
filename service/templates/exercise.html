@@ -6,6 +6,13 @@
 
 <div id="exercise-form-container"></div>
 
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <h3>This is how your exercise sets will be tracked</h3>
+        <div id="set-preview-container">Save the exercise before you will see anything here</div>
+    </div>
+</div>
+
 {% endblock %}
 
 
@@ -20,7 +27,13 @@ jQuery(document).ready(function($) {
 
     octopus.service.exerciseForm({
         selector : "#exercise-form-container",
-        exercise_id : exercise_id
+        exercise_id : exercise_id,
+        save_callback : function() {
+            octopus.service.setPreview({
+                selector: "#set-preview-container",
+                dataobj: octopus.page.data
+            })
+        }
     });
 
 })

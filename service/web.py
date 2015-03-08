@@ -1,4 +1,7 @@
 from octopus.core import app, initialise, add_configuration
+from service.exercise import Exercise
+from flask import request
+import json
 
 if __name__ == "__main__":
     import argparse
@@ -33,9 +36,29 @@ def root():
 def exercise(exercise_id=None):
     return render_template("exercise.html", exercise_id=exercise_id)
 
+@app.route("/exercise/<exercise_id>/set")
+def exercise_set(exercise_id):
+    e = Exercise.pull(exercise_id)
+    return render_template("_track_set.html", exercise=e)
+
 @app.route("/exercises")
 def exercises():
     return render_template("exercises.html")
+
+@app.route("/set", methods=["GET", "POST"])
+@app.route("/set/<exercise_id>")
+def trackset(exercise_id=None):
+    if exercise_id is not None:
+        e = Exercise.pull(exercise_id)
+        return render_template("set.html", exercise=e)
+    else:
+        if request.method == "GET":
+            return render_template("set.html")
+        elif request.method == "POST":
+            data = json.loads(request.data)
+            e = Exercise(data)
+            return render_template("_track_set.html", exercise=e)
+
 
 # this allows us to override the standard static file handling with our own dynamic version
 @app.route("/static/<path:filename>")

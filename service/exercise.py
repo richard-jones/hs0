@@ -120,12 +120,90 @@ class Exercise(dataobj.DataObj, ExerciseDAO):
         return self._get_list("info.aka", self._utf8_unicode())
 
     @property
+    def weight(self):
+        return self._get_single("track.weight", default=False, coerce=bool)
+
+    @property
+    def reps(self):
+        return self._get_single("track.reps", default=False, coerce=bool)
+
+    @property
+    def tempo(self):
+        return self._get_single("track.tempo", default=False, coerce=bool)
+
+    @property
+    def assist(self):
+        return self._get_single("track.assist", default=False, coerce=bool)
+
+    @property
+    def time(self):
+        return self._get_single("track.time", default=False, coerce=bool)
+
+    @property
+    def speed(self):
+        return self._get_single("track.speed", default=False, coerce=bool)
+
+    @property
+    def distance(self):
+        return self._get_single("track.distance", default=False, coerce=bool)
+
+    @property
+    def hr(self):
+        return self._get_single("track.hr", default=False, coerce=bool)
+
+    @property
+    def cal(self):
+        return self._get_single("track.cal", default=False, coerce=bool)
+
+    @property
+    def resisted(self):
+        return self._get_single("track.resisted", default=False, coerce=bool)
+
+    @property
+    def incline(self):
+        return self._get_single("track.incline", default=False, coerce=bool)
+
+    @property
+    def incline_unit(self):
+        return self._get_single("track.incline_settings.unit", coerce=self._utf8_unicode())
+
+    @property
     def indexed_name(self):
         return self._get_list("index.name", self._utf8_unicode())
 
     @indexed_name.setter
     def indexed_name(self, val):
         self._set_list("index.name", val, self._utf8_unicode())
+
+    def resistance_levels(self):
+        lower = 0.0
+        upper = self._get_single("track.resistance_settings.upper", coerce=self._int())
+        increment = self._get_single("track.resistance_settings.increment", coerce=self._float())
+        intify = False
+        if int(increment) == increment:
+            intify = True
+        v = lower
+        while v <= upper:
+            if intify:
+                yield int(v)
+            else:
+                yield v
+            v += increment
+
+    def incline_levels(self):
+        lower = 0.0
+        upper = self._get_single("track.incline_settings.upper", coerce=self._int())
+        increment = self._get_single("track.incline_settings.increment", coerce=self._float())
+        intify = False
+        if int(increment) == increment:
+            intify = True
+        v = lower
+        while v <= upper:
+            if intify:
+                yield int(v)
+            else:
+                yield v
+            v += increment
 
     def prep(self):
         super(Exercise, self).prep()

@@ -1,0 +1,164 @@
+<form id="set-form" data-parsley-ui-enabled="false">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-inline">
+
+                <!-- weight/assist select box -->
+                <div class="form-group">
+                    <label for="weight" class="control-label sr-only">load type</label>
+                    <select class="form-control" name="load" id="load">
+                        <option value="weight">weight</option>
+                        <option value="assist">assist</option>
+                    </select>
+                </div>
+
+                <!-- weight/assist entry box -->
+                <div class="form-group">
+                    <label for="weight" class="control-label sr-only">weight/assist</label>
+                    <input type="text" class="form-control" name="weight" id="weight" placeholder="Weight" style="width: 75px">
+                </div>
+
+                <!-- weight unit select box -->
+                <div class="form-group">
+                    <label for="weight" class="control-label sr-only">weight unit</label>
+                    <select class="form-control" name="weight_unit" id="weight_unit">
+                        <option value="kg">kg</option>
+                        <option value="lb">lb</option>
+                    </select>
+                </div>
+
+                <!-- resistance entry box -->
+                <div class="form-group">
+                    <label for="resistance" class="control-label">resistance</label>
+                    <select class="form-control" name="resistance" id="resistance">
+                        <option value="0">0</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
+                </div>
+
+                <!-- reps entry box -->
+                <div class="form-group">
+                    <label for="weight" class="control-label">reps</label>
+                    <input type="text" class="form-control" name="reps" id="reps" placeholder="Reps" style="width: 75px">
+                </div>
+
+                <!-- incline entry box -->
+                <div class="form-group">
+                    <label for="incline" class="control-label">incline</label>
+                    <select class="form-control" name="incline" id="incline">
+                        <option value="0">0</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                    </select>
+                </div>
+
+                <!-- speed entry box -->
+                <div class="form-group">
+                    <label for="speed" class="control-label">speed</label>
+                    <input type="text" class="form-control" name="speed" id="speed" placeholder="Speed" style="width: 75px">
+                </div>
+
+                <!-- speed units select box -->
+                <div class="form-group">
+                    <label for="speed_unit" class="control-label sr-only">speed unit</label>
+                    <select class="form-control" name="speed_unit" id="speed_unit">
+                        <option value="kmph">km/h</option>
+                        <option value="mph">mph</option>
+                        <option value="mps">m/s</option>
+                    </select>
+                </div>
+
+                <!-- time entry box -->
+                <div class="form-group">
+                    <label for="time" class="control-label">time</label>
+                    <input type="text" class="form-control" name="time" id="time" placeholder="Time" style="width: 75px">
+                </div>
+
+                <!-- time units select box -->
+                <div class="form-group">
+                    <label for="time_unit" class="control-label sr-only">time unit</label>
+                    <select class="form-control" name="time_unit" id="time_unit">
+                        <option value="min">min</option>
+                        <option value="sec">sec</option>
+                    </select>
+                </div>
+
+                <!-- distance entry box -->
+                <div class="form-group">
+                    <label for="distance" class="control-label">dist.</label>
+                    <input type="text" class="form-control" name="distance" id="distance" placeholder="Dist." style="width: 75px">
+                </div>
+
+                <!-- time units select box -->
+                <div class="form-group">
+                    <label for="distance_unit" class="control-label sr-only">distance unit</label>
+                    <select class="form-control" name="distance_unit" id="distance_unit">
+                        <option value="m">m</option>
+                        <option value="km">km</option>
+                        <option value="mi">miles</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-inline">
+                <!-- tempo boxes -->
+                <strong>tempo</strong>&nbsp;
+                <div class="form-group">
+                    <label for="tempo_negative" class="control-label sr-only">negative</label>
+                    <input type="text" class="form-control" name="tempo_negative" id="tempo_negative" placeholder="Neg." style="width: 75px">
+                </div>
+
+                <div class="form-group">
+                    <label for="tempo_hold" class="control-label sr-only">hold</label>
+                    <input type="text" class="form-control" name="tempo_hold" id="tempo_hold" placeholder="Hold" style="width: 75px">
+                </div>
+
+                <div class="form-group">
+                    <label for="tempo_movement" class="control-label sr-only">movement</label>
+                    <input type="text" class="form-control" name="tempo_movement" id="tempo_movement" placeholder="Move." style="width: 75px">
+                </div>
+
+                <!-- heart rate -->
+                <div class="form-group">
+                    <label for="hr" class="control-label">H.R.</label>
+                    <input type="text" class="form-control" name="hr" id="hr" placeholder="hr" style="width: 75px">
+                </div>
+
+                <!-- calories -->
+                <div class="form-group">
+                    <label for="cal" class="control-label">cal.</label>
+                    <input type="text" class="form-control" name="cal" id="cal" placeholder="cal" style="width: 75px">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-inline">
+                <!--perceived effort select box -->
+                <div class="form-group">
+                    <label for="effort" class="control-label">effort</label>
+                    <select class="form-control" name="effort" id="effort">
+                        <option value="1">1</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+
+                <!-- rest entry box -->
+                <div class="form-group">
+                    <label for="rest" class="control-label">rest</label>
+                    <input type="text" class="form-control" name="rest" id="rest" placeholder="Rest" style="width: 75px">&nbsp;min
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+

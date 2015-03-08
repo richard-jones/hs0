@@ -25,10 +25,10 @@ jQuery(document).ready(function($) {
                     speed : { type: "single", path : "track.speed", coerce: Boolean },
                     distance : { type: "single", path: "track.distance", coerce: Boolean },
                     resisted : { type: "single", path : "track.resisted", coerce: Boolean },
-                    resistance_upper : { type: "single", path: "track.resistance_settings.upper", coerce: parseFloat },
+                    resistance_upper : { type: "single", path: "track.resistance_settings.upper", coerce: parseInt },
                     resistance_increment : {type : "single", path: "track.resistance_settings.increment", coerce: parseFloat},
                     incline : { type: "single", path : "track.incline", coerce: Boolean },
-                    incline_upper : { type: "single", path : "track.incline_settings.upper", coerce:  parseFloat},
+                    incline_upper : { type: "single", path : "track.incline_settings.upper", coerce:  parseInt},
                     incline_increment : { type: "single", path : "track.incline_settings.increment", coerce:  parseFloat},
                     incline_unit : { type: "single", path : "track.incline_settings.unit", coerce: String, allowed_values : ["degrees", "pc"] },
                     hr : { type: "single", path : "track.hr", coerce: Boolean },
@@ -67,13 +67,40 @@ jQuery(document).ready(function($) {
                 }
             },
 
+            setPreview : function(params) {
+                var selector = params.selector;
+                var dataobj = params.dataobj;
+                var callback = params.callback;
+
+                function showPreview(html) {
+                    $(selector).html(html);
+                    if (callback) {
+                        callback();
+                    }
+                }
+
+                var postdata = JSON.stringify(dataobj.data);
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    dataType: "html",
+                    url: octopus.config.set_preview_endpoint,
+                    data : postdata,
+                    success: showPreview
+                })
+            },
+
             exerciseForm : function(params) {
                 var selector = params.selector;
                 var exercise_id = params.exercise_id;
+                var save_callback = params.save_callback;
 
                 function renderExerciseForm(frag) {
                     $(selector).html(frag);
-                    octopus.service.bootExerciseForm()
+                    octopus.service.bootExerciseForm({
+                        save_callback: save_callback
+                    })
                 }
 
                 function exerciseLoaded(data) {
@@ -103,7 +130,9 @@ jQuery(document).ready(function($) {
                 }
             },
 
-            bootExerciseForm : function() {
+            bootExerciseForm : function(params) {
+
+                var save_callback = params.save_callback;
 
                 function readForm() {
                     octopus.page.data = octopus.forms.form2obj({
@@ -251,6 +280,8 @@ jQuery(document).ready(function($) {
                     var valid = octopus.page.exercise_form.validate();
                     if (!valid) {
                         $("#general_error").show();
+                        // note that we don't remove the disabled save button, because the user
+                        // has to interact with the form before they can save again
                         return;
                     }
 
@@ -261,7 +292,10 @@ jQuery(document).ready(function($) {
                         octopus.page.last_saved = moment();
                         updateTime();
                         triggerTimeUpdates();
-                        // $("#save").removeAttr("disabled");
+
+                        if (save_callback) {
+                            save_callback()
+                        }
                     }
 
                     function onError(data) {
